@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Raw data is downloaded and checksum-verified by scripts/download_data.py
+data/raw/*
+!data/raw/.gitkeep
+*.part
+
+# Editor / OS
+.idea/
+.DS_Store
+
+# Streamlit secrets
+.streamlit/secrets.toml

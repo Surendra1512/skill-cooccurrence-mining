@@ -1,0 +1,9 @@
+# Python 3.10 – 3.13. Tested with the versions noted on the right.
+pandas>=2.2,<4          # tested 3.0.5
+numpy>=1.26,<3          # tested 2.5.3
+mlxtend>=0.23.4,<0.26   # tested 0.25.0
+plotly>=5.24,<8         # tested 7.2.0
+streamlit>=1.50,<2      # tested 1.67.0
+networkx>=3.2,<4        # tested 3.7
+pyarrow>=15             # tested 26.0.1
+pytest>=8               # tested 9.1.1

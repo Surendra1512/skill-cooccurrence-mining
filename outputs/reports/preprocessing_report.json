@@ -1,0 +1,134 @@
+{
+  "source": "data_jobs_2023",
+  "original_records": 787686,
+  "cleaned_records": 670261,
+  "duplicate_records_removed": 103,
+  "duplicate_ids_removed": 0,
+  "duplicate_content_removed": 103,
+  "missing_job_id_removed": 0,
+  "postings_without_skills_removed": 117322,
+  "missing_values_by_column": {
+    "job_id": 0,
+    "role": 0,
+    "job_title": 1,
+    "company_id": 0,
+    "job_location": 1053,
+    "country": 52,
+    "posted_at": 0
+  },
+  "missing_values_handling": "Categorical fields filled with 'Unknown'; postings without a job id or without any valid skill removed; unparseable dates kept but excluded from temporal analysis.",
+  "unparseable_dates": 0,
+  "distinct_raw_skill_strings": 252,
+  "synonym_variants_merged": 13,
+  "invalid_skill_strings_removed": 0,
+  "unique_skills": 239,
+  "total_transactions": 670261,
+  "total_skill_mentions": 3602107,
+  "avg_skills_per_transaction": 5.374,
+  "median_skills_per_transaction": 5.0,
+  "single_skill_transactions": 76231,
+  "date_min": "2022-12-31T06:00:59",
+  "date_max": "2023-12-31T06:06:25",
+  "top_skills": [
+    {
+      "label": "SQL",
+      "postings": 385686,
+      "share": 0.5754
+    },
+    {
+      "label": "Python",
+      "postings": 381808,
+      "share": 0.5696
+    },
+    {
+      "label": "AWS",
+      "postings": 145700,
+      "share": 0.2174
+    },
+    {
+      "label": "Azure",
+      "postings": 132838,
+      "share": 0.1982
+    },
+    {
+      "label": "R",
+      "postings": 131268,
+      "share": 0.1958
+    },
+    {
+      "label": "Tableau",
+      "postings": 127485,
+      "share": 0.1902
+    },
+    {
+      "label": "Excel",
+      "postings": 127328,
+      "share": 0.19
+    },
+    {
+      "label": "Spark",
+      "postings": 114914,
+      "share": 0.1714
+    },
+    {
+      "label": "Power BI",
+      "postings": 98480,
+      "share": 0.1469
+    },
+    {
+      "label": "Java",
+      "postings": 85840,
+      "share": 0.1281
+    },
+    {
+      "label": "Hadoop",
+      "postings": 65035,
+      "share": 0.097
+    },
+    {
+      "label": "Scala",
+      "postings": 57052,
+      "share": 0.0851
+    },
+    {
+      "label": "Snowflake",
+      "postings": 55139,
+      "share": 0.0823
+    },
+    {
+      "label": "Databricks",
+      "postings": 53274,
+      "share": 0.0795
+    },
+    {
+      "label": "GCP",
+      "postings": 50818,
+      "share": 0.0758
+    },
+    {
+      "label": "Git",
+      "postings": 50353,
+      "share": 0.0751
+    },
+    {
+      "label": "Kafka",
+      "postings": 50086,
+      "share": 0.0747
+    },
+    {
+      "label": "NoSQL",
+      "postings": 47762,
+      "share": 0.0713
+    },
+    {
+      "label": "Airflow",
+      "postings": 45351,
+      "share": 0.0677
+    },
+    {
+      "label": "Oracle",
+      "postings": 45312,
+      "share": 0.0676
+    }
+  ]
+}

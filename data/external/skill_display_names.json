@@ -1,0 +1,29 @@
+{
+  "_comment": "Human-readable labels for canonical skill tokens. Tokens not listed are displayed in Title Case.",
+  "labels": {
+    "sql": "SQL", "nosql": "NoSQL", "t-sql": "T-SQL", "r": "R", "sas": "SAS", "go": "Go",
+    "javascript": "JavaScript", "typescript": "TypeScript", "html": "HTML", "css": "CSS",
+    "c++": "C++", "c#": "C#", "c": "C", "f#": "F#", "matlab": "MATLAB", "vba": "VBA",
+    "php": "PHP", "vb.net": "VB.NET", "apl": "APL", "ocaml": "OCaml", "cobol": "COBOL",
+    "objective-c": "Objective-C", "powershell": "PowerShell", "mongodb": "MongoDB",
+    "mysql": "MySQL", "postgresql": "PostgreSQL", "sql server": "SQL Server", "sqlite": "SQLite",
+    "dynamodb": "DynamoDB", "db2": "Db2", "mariadb": "MariaDB", "couchdb": "CouchDB",
+    "aws": "AWS", "gcp": "GCP", "ibm cloud": "IBM Cloud", "bigquery": "BigQuery",
+    "digitalocean": "DigitalOcean", "ovh": "OVH", "vmware": "VMware", "openstack": "OpenStack",
+    "power bi": "Power BI", "dax": "DAX", "ssis": "SSIS", "ssrs": "SSRS", "spss": "SPSS",
+    "sap": "SAP", "ms access": "MS Access", "sharepoint": "SharePoint", "powerpoint": "PowerPoint",
+    "microstrategy": "MicroStrategy", "datarobot": "DataRobot",
+    "numpy": "NumPy", "pyspark": "PySpark", "tensorflow": "TensorFlow", "pytorch": "PyTorch",
+    "scikit-learn": "scikit-learn", "nltk": "NLTK", "gdpr": "GDPR", "rshiny": "R Shiny",
+    "ggplot2": "ggplot2", "graphql": "GraphQL", "opencv": "OpenCV", "mxnet": "MXNet",
+    "hugging face": "Hugging Face", "dplyr": "dplyr", "tidyr": "tidyr", "mlr": "mlr",
+    "mlpack": "mlpack", "qt": "Qt", "gtx": "GTX",
+    "node.js": "Node.js", "next.js": "Next.js", "nuxt.js": "Nuxt.js", "ember.js": "Ember.js",
+    "angular.js": "AngularJS", "asp.net": "ASP.NET", "asp.net core": "ASP.NET Core",
+    "fastapi": "FastAPI", "jquery": "jQuery",
+    "github": "GitHub", "gitlab": "GitLab", "npm": "npm", "svn": "SVN", "codecommit": "CodeCommit",
+    "macos": "macOS", "wsl": "WSL", "suse": "SUSE", "redhat": "Red Hat", "centos": "CentOS",
+    "monday.com": "monday.com", "clickup": "ClickUp", "dingtalk": "DingTalk",
+    "rocketchat": "Rocket.Chat", "ringcentral": "RingCentral", "webex": "Webex"
+  }
+}
