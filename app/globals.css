@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — "night ink" palette for a skill-constellation dashboard.
+ * Chart series colours are the validated dark-mode colour-blind-safe set.
+ */
+@theme {
+  --font-sans: "IBM Plex Sans Variable", "IBM Plex Sans", system-ui, sans-serif;
+
+  --color-ink: #0a1628;
+  --color-ink-2: #0d1b30;
+  --color-panel: #101f36;
+  --color-panel-2: #142641;
+  --color-line: #1e3352;
+  --color-line-2: #2a4468;
+  --color-fg: #e8edf5;
+  --color-muted: #8fa3bf;
+  --color-faint: #6a7f9e;
+  --color-signal: #338ced;
+  --color-signal-soft: #6aabf1;
+  --color-good: #0aac23;
+  --color-warn: #fbb315;
+  --color-bad: #eb6263;
+
+  --color-s1: #338ced;
+  --color-s2: #e76624;
+  --color-s3: #00a888;
+  --color-s4: #d28e05;
+  --color-s5: #e24d8b;
+  --color-s6: #0aac23;
+  --color-s7: #9887ef;
+  --color-s8: #eb6263;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background: var(--color-ink);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-signal) 45%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal-soft);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Scrollbars that belong to the palette */
+* {
+  scrollbar-color: var(--color-line-2) transparent;
+  scrollbar-width: thin;
+}
+
+/* Range inputs */
+input[type="range"] {
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-line-2);
+  accent-color: var(--color-signal);
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-fg);
+  border: 3px solid var(--color-signal);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-fg);
+  border: 3px solid var(--color-signal);
+  cursor: pointer;
+}
+
+/* Recharts tweaks for the dark surface */
+.recharts-cartesian-grid line {
+  stroke: var(--color-line);
+}
+.recharts-text {
+  fill: var(--color-muted);
+}
+.recharts-legend-item-text {
+  color: var(--color-muted) !important;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.animate-pulse-soft {
+  animation: pulse-soft 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "skill-cooccurrence-mining",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SIH26087 – Skill co-occurrence mining (Apriori / FP-Growth association rules) on 670k real job postings, with a training-planning dashboard.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "d3-force": "^3.0.0",
+    "lucide-react": "^1.83.0",
+    "next": "16.4.6",
+    "papaparse": "^5.5.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "recharts": "^3.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/d3-force": "^3.0.10",
+    "@types/node": "^22.20.7",
+    "@types/papaparse": "^5.5.2",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~5.9.3",
+    "vitest": "^5.1.2"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}

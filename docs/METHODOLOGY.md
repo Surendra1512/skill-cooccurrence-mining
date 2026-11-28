@@ -1,5 +1,9 @@
 # Methodology
 
+The mining runs in TypeScript in the browser (`lib/engine/`). It is a faithful port of the Python reference
+implementation in `pipeline/src/`, and `tests/reference.test.ts` checks that both give identical results on
+the full dataset.
+
 ## 1. Preprocessing
 
 | Step | Rule | Result on the reference data |

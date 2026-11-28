@@ -8,7 +8,7 @@
 | 2 | Original source URL | https://huggingface.co/datasets/lukebarousse/data_jobs |
 | 2b | Mirror actually downloaded | https://github.com/subhankar-das18/SQL-Job-Market-Analysis (`data/csv_files/`) |
 | 3 | Publisher | Luke Barousse. Postings collected by his job-search bot from Google Jobs listings (LinkedIn, Indeed, Glassdoor and other boards); skills extracted by keyword matching against a fixed taxonomy |
-| 4 | Download method | `python -m scripts.download_data`: HTTPS download of three files, SHA-256 verified, zip extracted |
+| 4 | Download method | `cd pipeline && python -m scripts.download_data`: HTTPS download of three files, SHA-256 verified, zip extracted |
 | 5 | Licence | Apache-2.0 as declared on the Hugging Face dataset card. The relational CSVs are the same data distributed with Barousse's SQL course; the GitHub mirror declares no separate licence |
 | 6 | Records | 787,686 postings; 3,669,604 posting–skill links; 259 skill entries (252 distinct names) |
 | 7 | Columns used | `job_postings_fact`: job_id, company_id, job_title_short, job_title, job_location, job_country, job_posted_date (also available but unused: job_via, schedule type, remote flag, degree/insurance flags, salary fields). `skills_dim`: skill_id, skills, type. `skills_job_dim`: job_id, skill_id |
@@ -50,7 +50,7 @@ original dataset by independent projects that use it.
 
 ## Reproducing the download manually
 If GitHub is blocked on your network, download these three files in a browser into
-`data/raw/data_jobs_2023/` and run `python -m scripts.build_dataset --offline` (checksums are still verified):
+`pipeline/data/raw/data_jobs_2023/` and run `python -m scripts.build_dataset --offline` (checksums are still verified):
 
 ```
 https://raw.githubusercontent.com/subhankar-das18/SQL-Job-Market-Analysis/main/data/csv_files/job_postings_fact.zip
@@ -59,6 +59,5 @@ https://raw.githubusercontent.com/subhankar-das18/SQL-Job-Market-Analysis/main/d
 ```
 
 ## Synthetic data
-None is used by the application. The automated tests use small, explicitly hand-written transaction lists
-(documented in `tests/conftest.py` and `tests/test_mining.py`) to verify calculations. They are never shown
-in the dashboard.
+None is used by the website. The automated tests use small, explicitly hand-written transaction lists
+(`tests/engine.test.ts`, `pipeline/tests/`) to verify calculations; they are never shown in the dashboard.

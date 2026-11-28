@@ -1,0 +1,4 @@
+# The website only needs public/data; the Python pipeline is not deployed.
+pipeline/
+tests/
+docs/

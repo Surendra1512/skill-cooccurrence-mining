@@ -3,84 +3,72 @@
 ## Architecture
 
 ```
-               ┌──────────────────────────┐
-               │ config/settings.py       │  thresholds, paths, weights, dataset definition
-               └────────────┬─────────────┘
-                            │
-data/raw ──► src/data_collection/dataset_loader.py ──► standard postings frame (raw_skills)
-                            │
-                            ▼
-         src/preprocessing/  cleaning → skill_normalization → transaction_builder
-                            │  (pipeline.py orchestrates + persists to data/processed)
-                            ▼
-         src/mining/  apriori_miner | fpgrowth_miner → association_rules → lift_filter
-                            │  (engine.py: one call = itemsets → rules → filter → rank)
-                            ▼
-   src/analytics/ skill_frequency · temporal_analysis · evaluation
-   src/recommendations/ training_recommender
-   src/visualization/ charts (Plotly figures from computed frames only)
-                            │
-                            ▼
-   dashboard/ state (cached computations) · components · 7 page modules ◄── app.py
+pipeline/ (Python, run once)                       Website (Next.js on Vercel)
+──────────────────────────────                     ─────────────────────────────────────────────
+download_data  → SHA-256 verified raw CSVs          public/data/meta.json
+build_dataset  → cleaning, normalisation            public/data/transactions.bin.gz
+export_web     → public/data/*  ───────────────►         │  fetch + DecompressionStream + decode
+               → tests/fixtures/reference.json           ▼
+                                                    lib/client/store.tsx  (state, caching)
+                                                         │ postMessage
+                                                         ▼
+                                                    workers/engine.worker.ts
+                                                      lib/engine: transactions → apriori | fpgrowth
+                                                                  → rules → filter → rank
+                                                                  → temporal, compare
+                                                         │
+                                                    app/* pages + components (charts, tables)
 ```
 
-## Key modules
+## Data format
 
-| Module | Public API |
+`transactions.bin.gz` (gzip) contains a header `SKM1`, a uint32 group count, and then for each group:
+role (uint8), country (uint8), quarter (uint8, 255 = undated), weight (varint), skill count (uint8) and skill
+ids (uint8 each). A group is the set of postings sharing the same skill set, role, country and quarter;
+670,261 postings compress to 365,232 groups. Mining weighted groups is mathematically identical to mining
+individual postings, which `tests/engine.test.ts` verifies.
+
+## Engine (`lib/engine/`)
+
+| Module | Responsibility |
 |---|---|
-| `dataset_loader` | `ensure_raw_files()`, `load_reference_dataset()`, `load_data_jobs(files)`, `load_user_csv(src, ColumnMapping)`, `parse_skill_cell()` |
-| `skill_normalization` | `SkillNormalizer.from_files()`, `.normalize()`, `.normalize_list()`, `.trace()`, `clean_skill_text()`, `display_name()` |
-| `cleaning` | `handle_missing_values`, `remove_duplicate_ids`, `remove_duplicate_content`, `drop_postings_without_skills` |
-| `transaction_builder` | `build_transactions()`, `one_hot_encode(lists, vocabulary)` |
-| `pipeline` | `run_preprocessing(raw)`, `save_preprocessed()`, `load_preprocessed()` |
-| `apriori_miner` / `fpgrowth_miner` | `mine_apriori(onehot, min_support, max_len)`, `mine_fpgrowth(...)` → `ItemsetResult` |
-| `association_rules` | `generate_rules(itemsets, min_confidence)`, `compute_rule_metrics()` (brute force), `evaluate_rules_on(onehot, rules)` |
-| `lift_filter` | `filter_rules()` → `FilterResult`, `rank_rules(rules, weights)`, `strongest_combinations()`, `lift_interpretation()` |
-| `engine` | `run_mining(onehot, MiningConfig, RankingWeights)` → `MiningOutcome` |
-| `skill_frequency` | `skill_frequency()`, `segment_frequency()`, `time_frequency()`, `pair_cooccurrence()`, `baseline_vs_association()` |
-| `temporal_analysis` | `analyse_temporal(postings, MiningConfig, TemporalConfig, labels)` → `TemporalResult` |
-| `evaluation` | `compare_algorithms(onehot, config)`, `write_evaluation_report()` |
-| `training_recommender` | `recommend(selected, ranked_rules, postings, catalog)` → `RecommendationResult`, `role_skill_gap()` |
+| `decode.ts` | Parse the binary file into typed arrays |
+| `transactions.ts` | Filter groups by role/country/quarter and merge identical skill sets into weighted transactions |
+| `apriori.ts` | Level-wise candidate generation with subset pruning, weighted counting |
+| `fpgrowth.ts` | Weighted FP-tree and recursive conditional-pattern mining |
+| `rules.ts` | Rule generation (all antecedent/consequent splits), metrics, sequential filtering, composite ranking |
+| `engine.ts` | One-call mining run, config validation, safety limit, Apriori vs FP-Growth comparison |
+| `frequency.ts` | Frequency baseline, segment frequencies, pair counts, baseline-vs-association pairs |
+| `temporal.ts` | Quarterly re-mining, rule re-evaluation, trend classification, stability |
+| `recommend.ts` | Complementary skills, combined programmes, role skill gap |
+| `normalize.ts` / `upload.ts` | Skill normalisation and CSV-to-dataset conversion for uploads |
 
-## Data contracts
-- **Standard postings frame** (loader output): `job_id, role, job_title, company_id, job_location, country, posted_at, raw_skills`.
-- **Processed postings** (`postings.parquet`): the same columns with `skills` (sorted canonical list) in place of `raw_skills`.
-- **Rules frame**: `antecedents, consequents` (frozensets), `antecedent_support, consequent_support, support, confidence, lift, leverage, conviction, support_count, antecedent_len, consequent_len`, plus `score, rank` after ranking.
+An itemset is frequent when `count / total >= minSupport`, the same floating-point test as `mlxtend`, so
+results match it exactly.
 
-## Performance (2 vCPU, full dataset)
-| Operation | Time |
+## Performance (full dataset, default thresholds, desktop browser)
+
+| Step | Time |
 |---|---|
-| Preprocessing (787k postings) | ~19 s |
-| Load processed parquet | ~1 s |
-| One-hot encode 670k × 239 | ~2 s |
-| FP-Growth, support 0.01, length ≤ 3 | ~4 s |
-| Apriori, same thresholds | ~7 s |
-| Temporal (4 quarters) | ~6 s |
-| Peak memory during mining | < 1 GB |
+| Download and decode 670,261 postings | about 1 s |
+| FP-Growth (support 1 %, length ≤ 3) | about 0.5 s |
+| Apriori, same thresholds | about 0.8 s |
+| Temporal analysis (4 quarters) | a few seconds |
 
-The dashboard caches the one-hot matrix and mining results by `(dataset, scope, config, weights)`. Mining
-runs only when **Generate rules** is pressed. A safety limit (60,000 frequent itemsets) stops runaway
-combinatorics at very low thresholds and tells the user what to change.
-
-## Configuration
-Edit `config/settings.py`: `MiningConfig` (defaults), `SliderBounds`, `RankingWeights`, `TemporalConfig`
-(period, minimum postings, top-K, trend threshold), `RecommenderConfig` (programme size, minimum supporting
-postings) and `PreprocessingConfig` (duplicate keys, skill length bounds). Dictionaries in `data/external/`
-extend normalisation, display labels and prerequisites without code changes.
+Results are cached per dataset, scope, configuration and weights, so revisiting a configuration is instant.
 
 ## Testing
-`python -m pytest` runs 87 tests in under a second:
-- `test_preprocessing.py`: loading (relational and user CSV), checksum helper, skill parsing, cleaning,
-  normalisation (synonyms, kept distinctions, invalid tokens, traceability), transactions, full pipeline counts, persistence.
-- `test_metrics.py`: hand-verified support, confidence and lift; metric identities; brute-force agreement on random data; period re-evaluation.
-- `test_mining.py`: itemsets, Apriori = FP-Growth, max length, rule shapes, filtering stages, ranking formula, baseline, algorithm comparison, temporal trends and exclusions.
-- `test_recommendations.py`: subset logic, evidence-backed outputs, empty or no-evidence cases, programme counts, minimum-posting rule, role gap.
 
-The dashboard was additionally exercised page by page with `streamlit.testing.AppTest` and in headless Chrome.
+* `npm test`: 65 Vitest tests. They cover hand-verified support, confidence and lift; Apriori = FP-Growth on
+  random data; weighting; filtering and the ranking formula; baseline; temporal classification;
+  recommender; normalisation; CSV upload; and **exact agreement with mlxtend on all 670,261 real postings**
+  for two configurations, plus the Python results for temporal analysis and a recommendation case.
+* `cd pipeline && python -m pytest`: 87 Python tests for the pipeline.
+* The deployed pages were exercised end to end in a headless browser: settings, filters, every tab,
+  downloads, CSV upload and mobile layout.
 
-## Error handling
-- Download or checksum failures raise `DatasetError` with an actionable message.
-- Mining on empty selections, unknown algorithms or excessive itemsets raises `MiningError`, which the UI
-  shows as an error, not a traceback.
-- Temporal analysis with fewer than two eligible periods explains how to fix the selection.
-- Uploaded CSVs are validated for parseability and required columns.
+## Accessibility
+
+Semantic landmarks and headings, a skip link, labelled form controls, keyboard-operable tabs and multi-selects,
+visible focus, a data-table view for charts, colour-blind-safe chart colours validated for the dark surface,
+and reduced motion respected.

@@ -1,0 +1,6 @@
+# Python data pipeline (Python 3.10+). Not needed to run or deploy the website.
+pandas>=2.2,<4
+numpy>=1.26,<3
+mlxtend>=0.23.4,<0.26
+pyarrow>=15
+pytest>=8
